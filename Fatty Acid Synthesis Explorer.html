@@ -1,0 +1,1176 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fatty Acid Synthesis Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column on a pale stroma-green ground; the working band
+   (chain on ACP, cycle wheel, turn track) breaks out wider. Colour encodes two
+   things only: what a step spends (cofactor hues, shared with the CETCH page)
+   and when a carbon joined the chain (a ramp from the primer to the newest turn). */
+:root{
+  --ground:#e6ebe5;
+  --surface:#f7f9f6;
+  --surface-2:#ecf0ea;
+  --ink:#16201a;
+  --ink-soft:#4a5950;
+  --ink-faint:#738177;
+  --rule:#c2ccc3;
+  --bond:#36423a;
+  --atp:#9a2f52;
+  --nadph:#0d6166;
+  --nadh:#2c55a0;
+  --co2:#a9560d;
+  --water:#56707e;
+  --o2:#5f4a97;
+  --oxy:#b0352a;
+  --sulfur:#856600;
+  --block:#b3261e;
+  --halo:#e3a21a;
+  --src0:#a0a8a3;
+  --src1:#e08a2c;
+  --src2:#3c6db3;
+  --src1-on:#16201a;
+  --src2-on:#ffffff;
+  --t1:#472c7a;--t2:#3b528b;--t3:#2c728e;--t4:#21918c;--t5:#28ae80;--t6:#5ec962;--t7:#addc30;--t8:#fde725;
+  --on-dark:#ffffff;
+  --on-light:#14201a;
+  --chip:#ffffff;
+  --shadow:0 1px 2px rgba(22,32,26,.07),0 6px 18px rgba(22,32,26,.06);
+  --f-display:"Archivo","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-data:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0f1511;--surface:#161e18;--surface-2:#1d271f;--ink:#e3eae4;--ink-soft:#a5b3aa;--ink-faint:#768579;--rule:#2f3b32;--bond:#b9c5bc;
+    --atp:#e88aa6;--nadph:#51b7bd;--nadh:#8aaaee;--co2:#e39a52;--water:#97adb8;--o2:#ae9ae4;--oxy:#f0877a;--sulfur:#e0c050;--block:#ff8a80;--halo:#f2c14e;
+    --src0:#7b8580;--src1:#eb9a45;--src2:#6d97db;--src1-on:#14201a;--src2-on:#0f1511;--chip:#1d271f;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0f1511;--surface:#161e18;--surface-2:#1d271f;--ink:#e3eae4;--ink-soft:#a5b3aa;--ink-faint:#768579;--rule:#2f3b32;--bond:#b9c5bc;
+  --atp:#e88aa6;--nadph:#51b7bd;--nadh:#8aaaee;--co2:#e39a52;--water:#97adb8;--o2:#ae9ae4;--oxy:#f0877a;--sulfur:#e0c050;--block:#ff8a80;--halo:#f2c14e;
+  --src0:#7b8580;--src1:#eb9a45;--src2:#6d97db;--src1-on:#14201a;--src2-on:#0f1511;--chip:#1d271f;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);color:var(--ink);font-family:var(--f-body);
+  font-size:16.5px;line-height:1.6;padding-block:0 4rem;padding-inline:20px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto}
+.col{max-width:66ch;margin:0 auto}
+h1,h2,h3,.eyebrow,.disp{font-family:var(--f-display);font-stretch:82%}
+h1{font-size:clamp(2.3rem,7vw,4rem);line-height:.98;margin:0;font-weight:750;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:clamp(1.5rem,3.6vw,2.05rem);line-height:1.08;margin:0;font-weight:700;text-wrap:balance}
+h3{font-size:1.15rem;margin:0;font-weight:700;letter-spacing:.005em}
+p{margin:0}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px;text-decoration-color:var(--rule)}
+a:hover{text-decoration-color:var(--nadph)}
+:focus-visible{outline:2px solid var(--nadph);outline-offset:2px;border-radius:3px}
+sub,sup{line-height:0}
+.eyebrow{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);font-weight:650;font-stretch:90%}
+.mono{font-family:var(--f-data)}
+.num{font-variant-numeric:tabular-nums}
+
+/* masthead */
+header.top{border-bottom:1px solid var(--rule);padding-block:3rem 1.5rem;margin-bottom:2rem}
+.top .stack{display:flex;flex-direction:column;gap:1.05rem}
+.lede{font-size:1.16rem;color:var(--ink-soft);max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:0 1.7rem;border-top:1px solid var(--rule);padding-top:1rem;margin-top:.3rem}
+.facts div{display:flex;gap:.45rem;align-items:baseline;padding-block:.2rem}
+.facts b{font-family:var(--f-data);font-size:1.02rem;font-weight:600;font-variant-numeric:tabular-nums}
+.facts span{font-size:.78rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-faint);font-family:var(--f-display);font-stretch:90%}
+
+section{margin-block:3.4rem}
+.sechead{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.2rem}
+.sechead .sub{color:var(--ink-soft);margin-top:.2rem}
+.body-flow{display:flex;flex-direction:column;gap:1.05rem}
+
+/* controls */
+.bench{display:flex;flex-direction:column;gap:1rem}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+button{
+  font-family:var(--f-display);font-stretch:88%;font-size:.9rem;font-weight:650;letter-spacing:.02em;
+  background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:3px;
+  padding:.46rem .85rem;cursor:pointer;
+}
+button:hover{border-color:var(--nadph);color:var(--nadph)}
+button:disabled{opacity:.42;cursor:default;border-color:var(--rule);color:var(--ink)}
+button.primary{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+button.primary:hover{background:var(--ink-soft);border-color:var(--ink-soft);color:var(--ground)}
+button[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.counter{font-family:var(--f-data);font-size:.8rem;color:var(--ink-faint);margin-left:.3rem}
+.settings{display:flex;flex-wrap:wrap;gap:.7rem 1.4rem;align-items:flex-end;padding:.85rem 1rem;border:1px solid var(--rule);border-radius:3px;background:var(--surface)}
+.settings label{display:flex;flex-direction:column;gap:.25rem;font-family:var(--f-display);font-stretch:90%;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:650;min-width:0}
+select{
+  font-family:var(--f-body);font-size:.95rem;color:var(--ink);background:var(--surface-2);
+  border:1px solid var(--rule);border-radius:3px;padding:.4rem .5rem;max-width:100%;letter-spacing:0;text-transform:none;
+}
+.seg{display:flex;flex-direction:column;gap:.25rem}
+.seg .lab{font-family:var(--f-display);font-stretch:90%;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:650}
+.seg .btns{display:flex}
+.seg .btns button{border-radius:0;font-size:.84rem}
+.seg .btns button:first-child{border-radius:3px 0 0 3px}
+.seg .btns button:last-child{border-radius:0 3px 3px 0;border-left:none}
+.hint{font-size:.92rem;color:var(--ink-soft);flex-basis:100%;border-top:1px dotted var(--rule);padding-top:.6rem}
+.hint b{font-family:var(--f-display);font-stretch:88%;color:var(--ink)}
+
+/* chain strip */
+.strip{background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:10px 12px 12px;box-shadow:var(--shadow)}
+.strip-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.3rem 1rem;padding:2px 4px 4px}
+.strip-head .nm{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:1.12rem}
+.strip-head .sh{font-family:var(--f-data);font-size:.8rem;color:var(--ink-faint)}
+.scrollx{overflow-x:auto;max-width:100%}
+#chain{display:block;width:100%;min-width:740px;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:.25rem 1rem;font-size:.76rem;color:var(--ink-soft);font-family:var(--f-data);padding:6px 4px 0}
+.legend span{display:flex;align-items:center;gap:.35rem}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block;border:1px solid var(--ink)}
+.cap{font-size:.86rem;color:var(--ink-soft);line-height:1.5;padding:6px 4px 0}
+
+/* chain svg */
+.bond{stroke:var(--bond);stroke-width:2.2;stroke-linecap:round;fill:none}
+.atom circle{stroke:var(--ink);stroke-width:1.3}
+.atom text{font:600 10px var(--f-data);text-anchor:middle}
+.alab{font:600 13px var(--f-data);text-anchor:middle}
+.alab-bg{fill:var(--surface)}
+.small{font:500 10.5px var(--f-data);fill:var(--ink-faint)}
+.acp ellipse{fill:var(--surface-2);stroke:var(--ink-soft);stroke-width:1.3}
+.acp text{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:15px;fill:var(--ink);text-anchor:middle}
+.ghost rect{fill:none;stroke:var(--ink-faint);stroke-dasharray:4 3;stroke-width:1}
+.halo{fill:var(--halo);opacity:.32}
+.born{animation:born .55s cubic-bezier(.2,.8,.3,1.2) both;transform-box:fill-box;transform-origin:center}
+.halo.pulse{animation:pulse 1.1s ease-out both;transform-box:fill-box;transform-origin:center}
+.rise{animation:rise 1.2s ease-out both}
+.fade-in{animation:fadein .5s ease-out both}
+@keyframes born{from{transform:scale(.15);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulse{0%{transform:scale(1.9);opacity:0}45%{opacity:.55}100%{transform:scale(1);opacity:.32}}
+@keyframes rise{from{transform:translateY(26px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+/* reactor */
+.reactor{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:1.4rem;align-items:start}
+@media (max-width:900px){.reactor{grid-template-columns:minmax(0,1fr)}}
+.wheelbox{background:var(--surface);border:1px solid var(--rule);border-radius:3px;min-width:0}
+#wheel{display:block;width:100%;min-width:520px;height:auto}
+.w-arc path{fill:none;stroke:var(--rule);stroke-width:2.6}
+.w-arc polygon{fill:var(--rule)}
+.w-arc.on path{stroke:var(--ink-soft);stroke-width:3.6}
+.w-arc.on polygon{fill:var(--ink-soft)}
+.w-node{fill:var(--surface);stroke:var(--ink);stroke-width:1.6}
+.w-l1{font:500 10px var(--f-data);fill:var(--ink-faint);letter-spacing:.02em}
+.w-l2{font-family:var(--f-display);font-stretch:84%;font-weight:650;font-size:14.5px;fill:var(--ink)}
+.chip rect{fill:var(--chip);stroke-width:1.5}
+.chip text{font:600 12.5px var(--f-data);text-anchor:middle}
+.chip.on rect{fill:var(--surface-2);stroke-width:3.2}
+.cof{font:500 11.5px var(--f-data)}
+.w-faint{font:500 10px var(--f-data);fill:var(--ink-faint);letter-spacing:.1em}
+.hub{fill:var(--surface-2);stroke:var(--rule);stroke-width:1}
+.hub-big{font-family:var(--f-display);font-stretch:78%;font-weight:750;font-size:46px;fill:var(--ink);text-anchor:middle}
+.hub-s{font:500 11px var(--f-data);fill:var(--ink-faint);text-anchor:middle}
+.feedline{stroke:var(--ink-faint);stroke-width:1.3;fill:none}
+.feedhead{fill:var(--ink-faint)}
+.feedtxt{font:500 11.5px var(--f-data);fill:var(--ink-soft);text-anchor:middle}
+#tok{fill:var(--halo);stroke:var(--ink);stroke-width:1.4;transition:cx .45s ease,cy .45s ease}
+.stallx line{stroke:var(--block);stroke-width:3.4;stroke-linecap:round}
+
+.side{display:flex;flex-direction:column;gap:1rem;min-width:0}
+.ledger{
+  border:1px solid var(--rule);border-radius:3px;background:var(--surface);padding:.7rem .85rem;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem 1rem;font-family:var(--f-data);font-size:.8rem;
+}
+.ledger div{display:flex;justify-content:space-between;gap:.5rem;border-bottom:1px dotted var(--rule);padding-bottom:.28rem}
+.ledger .k{color:var(--ink-soft)}
+.ledger .v{font-variant-numeric:tabular-nums;font-weight:600}
+.ledger .v.flash{animation:flash .9s ease-out}
+@keyframes flash{from{background:var(--halo);color:var(--on-light)}to{background:transparent}}
+.ledger .lh{grid-column:1/-1;border:none;padding:0;font-family:var(--f-display);font-stretch:90%;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);font-weight:650}
+.eqbox{border:1px solid var(--rule);border-radius:3px;background:var(--surface);padding:.75rem .85rem;display:flex;flex-direction:column;gap:.45rem}
+.eqbox .fine{font-size:.82rem;color:var(--ink-faint);line-height:1.5}
+.eqbox .fine b{color:var(--ink-soft)}
+.panel{border:1px solid var(--rule);border-radius:3px;background:var(--surface);padding:1.05rem 1.1rem;display:flex;flex-direction:column;gap:.75rem;box-shadow:var(--shadow);min-width:0}
+.panel>*{min-width:0}
+.rowtop{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+.stepno{font-family:var(--f-data);font-size:.76rem;color:var(--ink-faint);letter-spacing:.08em}
+.panel h3{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.panel h3 .ab{font-family:var(--f-data);font-size:.82rem;color:var(--ink-faint);font-weight:500}
+.swatch{width:10px;height:10px;border-radius:2px;flex:none;display:inline-block}
+.eq{font-family:var(--f-data);font-size:.8rem;line-height:1.65;background:var(--surface-2);border-left:2px solid var(--rule);padding:.55rem .7rem;overflow-x:auto;white-space:nowrap}
+.eq.wrap{white-space:normal}
+.spends{display:flex;flex-wrap:wrap;gap:.35rem}
+.tag{font-family:var(--f-data);font-size:.72rem;padding:.14rem .45rem;border-radius:2px;border:1px solid currentColor;letter-spacing:.02em}
+.ox{font-family:var(--f-data);font-size:.78rem;color:var(--ink-soft);display:flex;gap:.5rem;flex-wrap:wrap;align-items:baseline}
+.ox .k{font-family:var(--f-display);font-stretch:90%;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);font-weight:650}
+.panel p{font-size:.95rem;color:var(--ink-soft);line-height:1.62}
+.panel p.whatif{border-left:2px solid var(--block);padding-left:.7rem;color:var(--ink)}
+.panel p.whatif.ok{border-left-color:var(--nadph)}
+.navrow{display:flex;gap:.5rem}
+
+/* turn track */
+.track{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
+@media (max-width:760px){.track{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tc{border:1px solid var(--rule);border-radius:3px;background:var(--surface);padding:0 0 .45rem;display:flex;flex-direction:column;gap:.12rem;overflow:hidden;min-width:0}
+.tc .bar{height:6px;margin-bottom:.3rem}
+.tc .tn,.tc .tk,.tc .tl{padding-inline:.5rem}
+.tc .tn{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:.92rem}
+.tc .tk{font-family:var(--f-data);font-size:.72rem;color:var(--ink-soft)}
+.tc .tl{font-family:var(--f-data);font-size:.72rem;color:var(--ink-faint)}
+.pips{display:flex;gap:3px;padding:.25rem .5rem 0}
+.pips i{width:10px;height:6px;border-radius:1px;background:var(--rule);display:block}
+.pips i.on{background:var(--ink-soft)}
+.pips i.x{background:var(--block)}
+.tc[data-st="pending"]{opacity:.62}
+.tc[data-st="skip"]{opacity:.38;background:transparent}
+.tc[data-st="current"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.tc[data-st="blocked"]{border-color:var(--block);box-shadow:inset 0 0 0 1px var(--block)}
+.tc[data-st="blocked"] .tn{color:var(--block)}
+
+/* tables */
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:560px}
+th,td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--f-display);font-stretch:88%;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:650;white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--f-data)}
+td.code{font-family:var(--f-data);font-size:.8rem}
+.callout{border:1px solid var(--rule);border-left:3px solid var(--co2);border-radius:3px;background:var(--surface);padding:.95rem 1.05rem;font-size:.95rem;color:var(--ink-soft);display:flex;flex-direction:column;gap:.5rem}
+.callout b{color:var(--ink);font-family:var(--f-display);font-stretch:88%;letter-spacing:.01em}
+
+/* questions */
+details{border-bottom:1px solid var(--rule);padding-block:.85rem}
+details:first-of-type{border-top:1px solid var(--rule)}
+summary{cursor:pointer;font-size:1rem;list-style:none;display:flex;gap:.7rem;align-items:baseline}
+summary::-webkit-details-marker{display:none}
+summary .qn{font-family:var(--f-data);font-size:.78rem;color:var(--ink-faint);flex:none;padding-top:.15rem}
+summary .qt{flex:1;min-width:0}
+summary::after{content:"+";font-family:var(--f-data);color:var(--ink-faint);flex:none}
+details[open] summary::after{content:"–"}
+details .ans{margin-top:.7rem;padding-left:2.1rem;font-size:.95rem;color:var(--ink-soft);display:flex;flex-direction:column;gap:.6rem}
+@media (max-width:520px){details .ans{padding-left:0}}
+footer{border-top:1px solid var(--rule);padding-top:1.4rem;font-size:.88rem;color:var(--ink-soft);display:flex;flex-direction:column;gap:.55rem}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="stack">
+    <div class="eyebrow">BS3018 · Lipid synthesis in the chloroplast</div>
+    <h1>Two carbons per turn</h1>
+    <p class="lede">In the stroma, a fatty acid is built on a small carrier protein by repeating four reactions: condense, reduce, dehydrate, reduce. Each turn adds two carbons. Step through the cycle below and watch an 18-carbon chain grow out of a single acetyl-CoA.</p>
+    <div class="facts">
+      <div><b>4</b><span>reactions per turn</span></div>
+      <div><b>+2 C</b><span>per turn</span></div>
+      <div><b>7</b><span>turns to 16:0</span></div>
+      <div><b>8</b><span>turns to 18:0</span></div>
+      <div><b>1 ATP</b><span>per turn</span></div>
+      <div><b>NADPH + NADH</b><span>per turn</span></div>
+    </div>
+  </div>
+</header>
+
+<section style="margin-top:0">
+  <div class="col sechead">
+    <div class="eyebrow">01 · The cycle</div>
+    <h2>Condense, reduce, dehydrate, reduce. Repeat.</h2>
+    <p class="sub">Step one reaction at a time or press Play. Choose a product or a perturbation first, and predict where the chain will stop before you run it.</p>
+  </div>
+
+  <div class="bench">
+    <div class="settings">
+      <label for="route">Product
+        <select id="route">
+          <option value="ole" selected>Oleate, 18:1 (KAS II → SAD → FatA)</option>
+          <option value="pal">Palmitate, 16:0 (FatB)</option>
+          <option value="lau">Laurate, 12:0 (California bay FatB, engineered oilseed)</option>
+        </select>
+      </label>
+      <label for="pert">What if…
+        <select id="pert">
+          <option value="none" selected>Nothing: wild-type leaf</option>
+          <option value="cerulenin">Cerulenin (KAS inhibitor)</option>
+          <option value="triclosan">Triclosan (enoyl reductase inhibitor)</option>
+          <option value="grass">ACCase herbicide (fluazifop) on a grass</option>
+          <option value="dicot">ACCase herbicide (fluazifop) on a broadleaf plant</option>
+          <option value="fab1">Arabidopsis fab1 mutant</option>
+          <option value="fab2">Arabidopsis fab2 mutant</option>
+        </select>
+      </label>
+      <div class="seg">
+        <span class="lab" id="segLab">Colour carbons by</span>
+        <div class="btns" role="group" aria-labelledby="segLab">
+          <button type="button" id="mTurn" aria-pressed="true">turn added</button>
+          <button type="button" id="mSrc" aria-pressed="false">acetyl carbon</button>
+        </div>
+      </div>
+      <p class="hint" id="hint"></p>
+    </div>
+
+    <div class="controls">
+      <button type="button" id="bBack">← Back</button>
+      <button type="button" id="bStep" class="primary">Step →</button>
+      <button type="button" id="bPlay" aria-pressed="false">Play</button>
+      <button type="button" id="bEnd">Run to end</button>
+      <button type="button" id="bReset">Reset</button>
+      <span class="counter">reaction <span class="num" id="ctr">0</span> of <span class="num" id="ctrMax">0</span></span>
+    </div>
+
+    <figure class="strip" style="margin:0">
+      <div class="strip-head">
+        <span class="nm" id="chainName">acetyl-CoA</span>
+        <span class="sh" id="chainShort">primer</span>
+      </div>
+      <div class="scrollx"><svg id="chain" viewBox="0 0 980 214" role="img" aria-label="The growing acyl chain"></svg></div>
+      <div class="legend" id="legend"></div>
+      <figcaption class="cap">Carbons are numbered from the thioester carbon, C1. New carbons always join at the C1 end next to ACP, so every carbon already in the chain moves up two numbers each turn. The primer's two carbons finish at the methyl (ω) end.</figcaption>
+    </figure>
+
+    <div class="reactor">
+      <div class="wheelbox"><div class="scrollx" id="wheelBox"></div></div>
+      <div class="side">
+        <div class="panel" id="panel" aria-live="polite"></div>
+        <div class="ledger" id="ledger"></div>
+        <div class="eqbox" id="eqbox"></div>
+      </div>
+    </div>
+
+    <div class="track" id="track" aria-label="Progress through the turns"></div>
+  </div>
+</section>
+
+<section class="col">
+  <div class="sechead">
+    <div class="eyebrow">02 · Feeding the cycle</div>
+    <h2>Malonyl-ACP, and the only ATP in the pathway</h2>
+  </div>
+  <div class="body-flow">
+    <p>Every turn consumes one malonyl-ACP, made just upstream of the cycle (top right of the wheel). <b>Acetyl-CoA carboxylase</b> (ACCase) uses biotin, ATP and bicarbonate to carboxylate acetyl-CoA to malonyl-CoA. <b>Malonyl-CoA:ACP malonyltransferase</b> (MCMT) then moves the malonyl group from CoA onto acyl carrier protein. From here on, everything happens on ACP: a small acidic protein whose 4′-phosphopantetheine arm holds each intermediate as a thioester and carries it between separate enzymes.</p>
+    <p>In the plastids of most plants ACCase is a heteromeric, bacterial-type complex of four subunits: biotin carboxyl carrier protein, biotin carboxylase, and the α and β subunits of carboxyltransferase. The β-carboxyltransferase gene, <i>accD</i>, is carried in the plastid genome. Grasses are the exception. Their plastid ACCase is a single large multidomain protein, like the cytosolic enzyme, and that difference is what grass-selective herbicides exploit.</p>
+    <p>ACCase catalyses the committed step and is where flux is controlled. It is activated in the light, as the stroma becomes more alkaline, Mg²⁺ rises, and thioredoxin reduces a disulfide in the carboxyltransferase. Accumulating acyl-ACP inhibits it, which matches supply to demand.</p>
+    <div class="callout">
+      <b>The bicarbonate is only on loan</b>
+      <p>The carbon that ACCase adds leaves again as CO₂ in the very next condensation, so none of it ends up in the fatty acid. What stays is the energy. A Claisen condensation between two ordinary thioesters is uphill; run in reverse, it is the thiolase step of β-oxidation. Decarboxylating malonyl makes the condensation strongly favourable, so the ATP spent by ACCase is what drives chain growth forward.</p>
+    </div>
+  </div>
+</section>
+
+<section class="col">
+  <div class="sechead">
+    <div class="eyebrow">03 · The bill</div>
+    <h2>What one fatty acid costs</h2>
+  </div>
+  <div class="body-flow">
+    <p>Each turn costs one ATP (spent by ACCase) and two reductions: one NADPH at the keto reductase and one NADH at the enoyl reductase. The plastid enzymes split the reducing power this way; animal fatty acid synthase uses NADPH for both.</p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Product</th><th class="n">Turns</th><th class="n">Acetyl-CoA</th><th class="n">ATP</th><th class="n">NADPH</th><th class="n">NADH</th><th class="n">Fd (red)</th><th class="n">CO₂ out</th><th class="n">H₂O, net</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Laurate, 12:0</td><td class="n">5</td><td class="n">6</td><td class="n">5</td><td class="n">5</td><td class="n">5</td><td class="n">0</td><td class="n">5</td><td class="n">4</td></tr>
+          <tr><td>Palmitate, 16:0</td><td class="n">7</td><td class="n">8</td><td class="n">7</td><td class="n">7</td><td class="n">7</td><td class="n">0</td><td class="n">7</td><td class="n">6</td></tr>
+          <tr><td>Stearate, 18:0</td><td class="n">8</td><td class="n">9</td><td class="n">8</td><td class="n">8</td><td class="n">8</td><td class="n">0</td><td class="n">8</td><td class="n">7</td></tr>
+          <tr><td>Oleate, 18:1 cis-Δ⁹</td><td class="n">8</td><td class="n">9</td><td class="n">8</td><td class="n">8</td><td class="n">8</td><td class="n">2</td><td class="n">8</td><td class="n">9</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>In a leaf, almost all of this comes from the light reactions or close to them. ATP and NADPH come from the thylakoid; the two reduced ferredoxins that the desaturase needs come straight from photosystem I. Much of the NADH comes from the plastid pyruvate dehydrogenase complex, the same reaction that supplies the acetyl-CoA. Add the light activation of ACCase, and it is no surprise that fatty acid synthesis in leaves runs far faster in the light than in the dark.</p>
+    <p class="mono" style="font-size:.82rem;color:var(--ink-faint)">Water, net = one per dehydration, minus one for the thioesterase, plus two for the desaturase.</p>
+  </div>
+</section>
+
+<section class="col">
+  <div class="sechead">
+    <div class="eyebrow">04 · Where the chain stops</div>
+    <h2>Chain length is set by whoever reaches the acyl-ACP first</h2>
+  </div>
+  <div class="body-flow">
+    <p>The cycle itself has no built-in stopping point. At every turn the saturated acyl-ACP is a branch point: a KAS can extend it, or another enzyme can take it away. In most plastids FatB competes with KAS II for 16:0-ACP, and almost everything that reaches 18:0-ACP is desaturated before FatA releases it as oleate. Change the competitor and you change the product, which is how a single California bay thioesterase turned rapeseed oil towards laurate.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Enzyme</th><th>Prefers</th><th>Makes</th><th>Fate of the product</th></tr></thead>
+        <tbody>
+          <tr><td><b>FatB</b></td><td>saturated acyl-ACP, mainly 16:0</td><td class="code">palmitate + ACP</td><td>exported from the plastid</td></tr>
+          <tr><td><b>KAS II</b></td><td>16:0-ACP only</td><td class="code">18-carbon chain on ACP</td><td>finishes turn 8 → stearoyl-ACP</td></tr>
+          <tr><td><b>SAD</b></td><td>18:0-ACP</td><td class="code">oleoyl-ACP (18:1 cis-Δ⁹)</td><td>to FatA, or to plastid acyltransferases</td></tr>
+          <tr><td><b>FatA</b></td><td>18:1-ACP</td><td class="code">oleate + ACP</td><td>exported from the plastid</td></tr>
+          <tr><td><b>Plastid acyltransferases</b></td><td>acyl-ACPs (18:1 at sn-1, 16:0 at sn-2)</td><td class="code">phosphatidic acid</td><td>stays in the plastid: the “prokaryotic” pathway of membrane lipid synthesis</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Free fatty acids cross the plastid envelope and are reactivated as acyl-CoAs by long-chain acyl-CoA synthetases on the outer envelope. In the ER they become membrane phospholipids and, in seeds, triacylglycerol. Desaturation beyond 18:1 happens later, on lipids, not on ACP.</p>
+  </div>
+</section>
+
+<section class="col">
+  <div class="sechead">
+    <div class="eyebrow">05 · Run it backwards</div>
+    <h2>Synthesis and β-oxidation mirror each other, step for step</h2>
+  </div>
+  <div class="body-flow">
+    <p>Read each row from left to right for synthesis, from right to left for breakdown in the peroxisome. The chemistry is the same four bond changes; the carriers, cofactors and stereochemistry are not. Keeping them different lets the cell run both pathways without one undoing the other.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Synthesis, plastid</th><th>Bond change</th><th>β-oxidation, peroxisome</th></tr></thead>
+        <tbody>
+          <tr><td>KAS: condensation with malonyl-ACP, CO₂ released</td><td>C–C bond made / broken</td><td>3-ketoacyl-CoA thiolase: acetyl-CoA released</td></tr>
+          <tr><td>KAR: ketone → (3R)-alcohol, NADPH</td><td>C3 ketone ⇄ alcohol</td><td>3-hydroxyacyl-CoA dehydrogenase: (3S)-alcohol → ketone, NAD⁺</td></tr>
+          <tr><td>HAD: removes H₂O</td><td>C2–C3 alcohol ⇄ alkene</td><td>enoyl-CoA hydratase: adds H₂O</td></tr>
+          <tr><td>ENR: alkene → alkane, NADH</td><td>C2=C3 ⇄ C2–C3</td><td>acyl-CoA oxidase: FAD, electrons passed to O₂ → H₂O₂</td></tr>
+          <tr><td><i>carrier: ACP</i></td><td></td><td><i>carrier: CoA</i></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="col">
+  <div class="sechead">
+    <div class="eyebrow">06 · Tutorial</div>
+    <h2>Questions</h2>
+    <p class="sub">Use the explorer to check your reasoning. Answers open under each question.</p>
+  </div>
+  <div id="qs">
+    <details>
+      <summary><span class="qn">Q1</span><span class="qt">Chloroplasts are given [1-¹⁴C]acetate, labelled on the carboxyl carbon, which they convert to [1-¹⁴C]acetyl-CoA. Which carbons of the palmitate they make are labelled?</span></summary>
+      <div class="ans">
+        <p>All the odd-numbered carbons: C1, C3, C5 … C15. Acetyl C1 becomes the thioester carbon of malonyl-CoA, and therefore the new C1 of the chain in every turn. One turn later that carbon is C3, then C5, and so on. The primer's carbonyl carbon finishes at C15 and its methyl carbon at C16.</p>
+        <p>Switch the explorer to <b>Colour carbons by: acetyl carbon</b> and run to the end to see the alternation.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q2</span><span class="qt">A mixture of purified plastid enzymes (ACCase, MCMT and the four cycle enzymes) is given acetyl-CoA, ATP, NADPH, NADH, ACP and H¹⁴CO₃⁻. How much ¹⁴C ends up in the fatty acids? Why carboxylate at all?</span></summary>
+      <div class="ans">
+        <p>None. The carbon ACCase adds is the free carboxyl of malonyl, which is released as CO₂ during condensation.</p>
+        <p>The carboxylation is there for thermodynamics. Decarboxylation of malonyl generates the carbanion that attacks the acyl thioester and makes the condensation strongly favourable; the condensation of two plain acetyl thioesters lies the other way, which is why thiolase cleaves in β-oxidation. The ATP spent by ACCase is the price of driving the chain forward.</p>
+        <p>In an intact leaf in the light, label from bicarbonate would of course reach fatty acids eventually, through photosynthesis, pyruvate and acetyl-CoA. That is a different route.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q3</span><span class="qt">List what one molecule of oleate costs a leaf chloroplast, and say where each input comes from in the light. Why does fatty acid synthesis slow sharply in the dark?</span></summary>
+      <div class="ans">
+        <p>9 acetyl-CoA, 8 ATP, 8 NADPH, 8 NADH, 2 reduced ferredoxin and one O₂. ATP comes from the thylakoid ATP synthase; NADPH from linear electron flow through ferredoxin–NADP⁺ reductase; reduced ferredoxin for SAD directly from photosystem I; acetyl-CoA and much of the NADH from plastid pyruvate dehydrogenase.</p>
+        <p>In the dark the supply of ATP and reductant falls, and ACCase is switched down: the stroma acidifies, Mg²⁺ falls, and the thioredoxin-dependent reduction of the carboxyltransferase is lost.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q4</span><span class="qt">Cerulenin stops the chain at butyryl-ACP; triclosan stops it at crotonyl-ACP. Explain each. What would you find with both inhibitors present?</span></summary>
+      <div class="ans">
+        <p>Cerulenin acylates the active-site cysteine of KAS I and KAS II. KAS III is insensitive, so the first turn completes and 4:0-ACP waits for a KAS I that cannot act. Triclosan blocks the enoyl reductase, so the first turn halts after three of its four steps with trans-Δ²-butenoyl (crotonyl)-ACP.</p>
+        <p>With both present, triclosan acts first: the chain never reaches butyryl-ACP, so cerulenin has nothing further to block. Crotonyl-ACP accumulates.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q5</span><span class="qt">Fluazifop controls grass weeds in a soybean field without harming the soybean. Explain using the structure of plastid ACCase.</span></summary>
+      <div class="ans">
+        <p>Fops and dims bind the carboxyltransferase domain of the homomeric, multidomain ACCase. Grasses use that form in their plastids, so the herbicide stops malonyl-CoA production at the source and no fatty acid synthesis can start, not even the KAS III turn. Soybean, like other broadleaf plants, uses the heteromeric, bacterial-type ACCase in its plastids, which the herbicide does not inhibit. Compare the two herbicide options in the explorer.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q6</span><span class="qt">Coconut and California bay store oil rich in 12:0, yet their fatty acid synthase works like any other plant's. What determines chain length, and what single change made laurate-rich rapeseed?</span></summary>
+      <div class="ans">
+        <p>Chain length is set by competition for each acyl-ACP between the next KAS and a termination enzyme. Plants that store medium-chain fatty acids express FatB thioesterases that hydrolyse 8- to 14-carbon acyl-ACPs before KAS I can extend them.</p>
+        <p>Expressing the California bay FatB in developing rapeseed seeds was enough to redirect much of the oil to laurate (Voelker et al. 1992). Run the laurate route and count the turns that are no longer used.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q7</span><span class="qt">Follow C3 through one turn. Give its oxidation state after each step, and say which steps are redox reactions.</span></summary>
+      <div class="ans">
+        <p>After condensation C3 is a ketone carbon, +2. KAR reduces it to the alcohol, 0. HAD takes it to −1 in the C2=C3 alkene, but C2 goes from −2 to −1 at the same time, so the dehydration is not a redox reaction overall. ENR takes both C2 and C3 to −2.</p>
+        <p>So KAR and ENR are the two reductions, each adding two electrons. The four electrons per turn come from NADPH and NADH.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q8</span><span class="qt">Plants use a type II synthase (separate enzymes, intermediates on a free ACP); animals use a type I synthase (one large multifunctional protein). Suggest an advantage of type II for a plastid.</span></summary>
+      <div class="ans">
+        <p>Every acyl-ACP is accessible to other enzymes. Thioesterases with different chain-length preferences, the soluble desaturase, the plastid acyltransferases, and the octanoyltransferase that starts lipoic acid synthesis can all draw intermediates off the same pool. Separate KAS isoforms with different specificities can be regulated and engineered independently. In a type I synthase the chain stays on the complex until it is released, so there is far less room for branching.</p>
+      </div>
+    </details>
+    <details>
+      <summary><span class="qn">Q9</span><span class="qt">The ER fatty acid elongase, which makes very-long-chain fatty acids for cuticular wax, uses the same four reactions. What is different about its carrier and its source of two-carbon units?</span></summary>
+      <div class="ans">
+        <p>The elongase works on acyl-CoAs, not acyl-ACPs, and takes its two-carbon units directly from malonyl-CoA made by the cytosolic, homomeric ACCase; no ACP is involved. Its four enzymes (3-ketoacyl-CoA synthase, 3-ketoacyl-CoA reductase, 3-hydroxyacyl-CoA dehydratase and enoyl-CoA reductase) are membrane-bound in the ER, and the ketoacyl-CoA synthase sets the final chain length.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<footer class="col">
+  <div class="eyebrow">Sources</div>
+  <div>Ohlrogge J, Browse J (1995) Lipid biosynthesis. <i>Plant Cell</i> 7:957–970. <a href="https://doi.org/10.1105/tpc.7.7.957">doi:10.1105/tpc.7.7.957</a></div>
+  <div>Li-Beisson Y <i>et al.</i> (2013) Acyl-lipid metabolism. <i>The Arabidopsis Book</i> 11:e0161. <a href="https://doi.org/10.1199/tab.0161">doi:10.1199/tab.0161</a></div>
+  <div>Jaworski JG, Clough RC, Barnum SR (1989) A cerulenin insensitive short chain 3-ketoacyl-acyl carrier protein synthase in <i>Spinacia oleracea</i> leaves. <i>Plant Physiol</i> 90:41–44. <a href="https://doi.org/10.1104/pp.90.1.41">doi:10.1104/pp.90.1.41</a></div>
+  <div>Voelker TA <i>et al.</i> (1992) Fatty acid biosynthesis redirected to medium chains in transgenic oilseed plants. <i>Science</i> 257:72–74. <a href="https://doi.org/10.1126/science.1621095">doi:10.1126/science.1621095</a></div>
+  <div>Wu J, James DW, Dooner HK, Browse J (1994) A mutant of Arabidopsis deficient in the elongation of palmitic acid. <i>Plant Physiol</i> 106 (fab1, KAS II).</div>
+  <div>Lightner J, Wu J, Browse J (1994) A mutant of Arabidopsis with increased levels of stearic acid. <i>Plant Physiol</i> 106 (fab2, stearoyl-ACP desaturase).</div>
+  <div>Sasaki Y, Kozaki A, Hatano M (1997) Link between light and fatty acid synthesis: thioredoxin-linked reductive activation of plastidic acetyl-CoA carboxylase. <i>Proc Natl Acad Sci USA</i> 94.</div>
+  <div style="color:var(--ink-faint)">A teaching model. Enzyme blocks are shown as complete; in the real mutants activity is reduced rather than absent.</div>
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function f(v){ return (Math.round(v*10)/10).toString(); }
+
+/* ---------- names ---------- */
+var COMMON = {2:"acetyl",4:"butyryl",6:"hexanoyl",8:"octanoyl",10:"decanoyl",12:"lauroyl",14:"myristoyl",16:"palmitoyl",18:"stearoyl"};
+var STEM = {4:"butanoyl",6:"hexanoyl",8:"octanoyl",10:"decanoyl",12:"dodecanoyl",14:"tetradecanoyl",16:"hexadecanoyl",18:"octadecanoyl"};
+var ENSTEM = {4:"butenoyl",6:"hexenoyl",8:"octenoyl",10:"decenoyl",12:"dodecenoyl",14:"tetradecenoyl",16:"hexadecenoyl",18:"octadecenoyl"};
+function keto(n){ return n===4 ? "acetoacetyl" : "3-keto"+STEM[n]; }
+function hydroxy(n){ return "(3R)-3-hydroxy"+(n===4 ? "butyryl" : STEM[n]); }
+function enoyl(n){ return n===4 ? "crotonyl" : "trans-Δ²-"+ENSTEM[n]; }
+function acyl(n){ return COMMON[n]; }
+function kasFor(t){ return t===1 ? "KAS III" : (t===8 ? "KAS II" : "KAS I"); }
+
+var ROUTES = {
+  ole:{T:8, term:["sad","fata"]},
+  pal:{T:7, term:["fatb"]},
+  lau:{T:5, term:["bay"]}
+};
+var TE = {
+  fata:{abbr:"FatA", name:"Acyl-ACP thioesterase A", prod:"oleate", sh:"18:1 cis-Δ⁹", sub:"oleoyl"},
+  fatb:{abbr:"FatB", name:"Acyl-ACP thioesterase B", prod:"palmitate", sh:"16:0", sub:"palmitoyl"},
+  bay:{abbr:"UcFatB1", name:"Lauroyl-ACP thioesterase (California bay FatB)", prod:"laurate", sh:"12:0", sub:"lauroyl"},
+  te18:{abbr:"FatA / FatB", name:"Acyl-ACP thioesterase", prod:"stearate", sh:"18:0", sub:"stearoyl"}
+};
+var TERMLAB = {sad:"SAD", fata:"FatA", fatb:"FatB", bay:"bay FatB", te18:"FatA/B"};
+
+var COL = {atp:"var(--atp)", nadph:"var(--nadph)", nadh:"var(--nadh)", co2:"var(--co2)", water:"var(--water)", o2:"var(--o2)", ink:"var(--ink-soft)", block:"var(--block)"};
+
+/* ---------- state sequence ---------- */
+function build(route, pert){
+  var T = ROUTES[route].T, term = ROUTES[route].term.slice();
+  if (pert === "fab1" && route === "ole"){ T = 7; term = ["fatb"]; }
+  if (pert === "fab2" && route === "ole"){ term = ["te18"]; }
+  var S = [];
+  var atoms = [{t:0, src:"c1"}, {t:0, src:"c2"}];
+  var led = {acetyl:0, mal:0, atp:0, nadph:0, nadh:0, co2:0, h2o:0, fd:0, o2:0};
+  var desat = false;
+  function snap(o){
+    o.atoms = atoms.map(function(a){ return {t:a.t, src:a.src}; });
+    o.led = JSON.parse(JSON.stringify(led));
+    o.T = T; o.route = route; o.pert = pert; o.term = term;
+    if (o.c3 === undefined) o.c3 = null;
+    if (o.desat === undefined) o.desat = desat;
+    if (!o.hl) o.hl = [];
+    if (!o.born) o.born = [];
+    S.push(o);
+  }
+  snap({kind:"start", turn:0, n:2, carrier:"CoA", pos:"top", station:"feed", hl:[0,1]});
+  if (pert === "grass"){
+    snap({kind:"stall", why:"grass", turn:0, n:2, carrier:"CoA", pos:"top", station:"feed", blocked:"acc", done:0});
+    return S;
+  }
+  for (var t = 1; t <= T; t++){
+    var n = 2 + 2*t;
+    if (pert === "cerulenin" && t >= 2){
+      snap({kind:"stall", why:"cerulenin", turn:t, n:n-2, carrier:"ACP", pos:"top", station:0, blocked:"kas", done:0});
+      return S;
+    }
+    atoms.unshift({t:t, src:"c2"}); atoms.unshift({t:t, src:"c1"});
+    led.mal++; led.acetyl++; led.atp++; led.co2++;
+    if (t === 1) led.acetyl++;
+    snap({kind:"kas", turn:t, n:n, c3:"keto", carrier:"ACP", pos:"right", station:0, hl:[0,1,2], born:[0,1], co2:true});
+    led.nadph++;
+    snap({kind:"kar", turn:t, n:n, c3:"hydroxy", carrier:"ACP", pos:"bottom", station:1, hl:[2]});
+    led.h2o++;
+    snap({kind:"had", turn:t, n:n, c3:"enoyl", carrier:"ACP", pos:"left", station:2, hl:[1,2]});
+    if (pert === "triclosan"){
+      snap({kind:"stall", why:"triclosan", turn:t, n:n, c3:"enoyl", carrier:"ACP", pos:"left", station:3, blocked:"enr", done:3});
+      return S;
+    }
+    led.nadh++;
+    snap({kind:"enr", turn:t, n:n, carrier:"ACP", pos:"top", station:3, hl:[1,2], last:(t === T)});
+  }
+  var nf = 2 + 2*T;
+  term.forEach(function(k){
+    if (k === "sad"){
+      led.fd += 2; led.o2 += 1; led.h2o += 2; desat = true;
+      snap({kind:"sad", turn:T, n:nf, desat:true, carrier:"ACP", pos:"exit", station:"term", hl:[8,9]});
+    } else {
+      led.h2o -= 1;
+      snap({kind:"te", te:k, turn:T, n:nf, carrier:"free", pos:"exit", station:"term", hl:[0], final:true});
+    }
+  });
+  return S;
+}
+
+/* ---------- panel text ---------- */
+function startNote(s){
+  var p = s.pert, r = s.route, out = [];
+  if (p === "dicot") out.push(["ok","Herbicide present. This broadleaf plastid carries the heteromeric, bacterial-type ACCase, which fops and dims do not inhibit. Predict: does anything change?"]);
+  if (p === "cerulenin") out.push(["","Cerulenin is present. Before you step: how many carbons will the chain have when it stops?"]);
+  if (p === "triclosan") out.push(["","Triclosan is present. Before you step: which intermediate will pile up?"]);
+  if (p === "fab1") out.push(r === "ole" ? ["","fab1: KAS II activity is low. Predict which fatty acid the plastid will release instead of oleate."] : ["ok","fab1 affects only the 16:0 → 18:0 step, so nothing changes on this route. Choose the oleate route to see its effect."]);
+  if (p === "fab2") out.push(r === "ole" ? ["","fab2: stearoyl-ACP desaturase activity is low. Predict the product."] : ["ok","fab2 affects only desaturation of 18:0, so nothing changes on this route. Choose the oleate route to see its effect."]);
+  return out;
+}
+
+function info(s){
+  var n = s.n, t = s.turn, T = s.T, o = {tags:[], ox:null, notes:[]};
+  switch (s.kind){
+  case "start":
+    o.step = "START · TURN 0"; o.cls = "ink"; o.title = "The primer: acetyl-CoA"; o.abbr = "";
+    o.eq = "acetyl-CoA = CH₃–CO–S-CoA";
+    o.note = "Every fatty acid made in the plastid starts from one acetyl-CoA. In a leaf it comes mostly from pyruvate, through the plastid pyruvate dehydrogenase complex. Its two carbons, drawn in solid ink, will finish at the methyl (ω) end of the chain. Every other carbon arrives two at a time as malonyl-ACP, made by ACCase and MCMT at the top right of the wheel.";
+    o.notes = startNote(s);
+    break;
+  case "kas":
+    o.cls = "co2"; o.step = "TURN "+t+" OF "+T+" · STEP 1 / 4 · CONDENSE";
+    o.tags = [["malonyl-ACP in","co2"],["CO₂ out","co2"],["1 ATP, spent upstream by ACCase","atp"]];
+    if (t === 1){
+      o.title = "3-Ketoacyl-ACP synthase III"; o.abbr = "KAS III";
+      o.eq = "acetyl-CoA + malonyl-ACP → acetoacetyl-ACP + CO₂ + CoA";
+      o.note = "The two-carbon addition. KAS III is the only condensing enzyme that takes its primer straight from acetyl-CoA. The acetyl group is first loaded onto a cysteine in the active site; malonyl-ACP then loses its free carboxyl as CO₂, and the carbanion left behind attacks the acetyl thioester. The chain is now four carbons long and sits on the ACP that brought the malonyl. The CO₂ released is the carbon ACCase added as bicarbonate.";
+    } else if (t === 8){
+      o.title = "3-Ketoacyl-ACP synthase II"; o.abbr = "KAS II";
+      o.eq = "palmitoyl-ACP + malonyl-ACP → 3-ketooctadecanoyl-ACP + CO₂ + ACP";
+      o.note = "KAS II has one job: it extends 16:0-ACP to 18 carbons. It competes with the thioesterase FatB for the same palmitoyl-ACP, and the balance between the two largely sets how much 16:0 versus 18-carbon fatty acid the plastid exports.";
+    } else {
+      o.title = "3-Ketoacyl-ACP synthase I"; o.abbr = "KAS I";
+      o.eq = acyl(n-2)+"-ACP + malonyl-ACP → "+keto(n)+"-ACP + CO₂ + ACP";
+      o.note = (t === 2)
+        ? "Same chemistry, different enzyme. KAS I takes over from turn 2 and accepts saturated acyl-ACPs from C4 to C14, so it runs six of the seven turns to palmitate. The chain moves to the active-site cysteine, the ACP that carried it is released, and the chain is rebuilt on the ACP of the incoming malonyl unit."
+        : "Turn "+t+": KAS I adds two more carbons to "+acyl(n-2)+"-ACP. The new C1 and C2 come from malonyl; the old C1 is now C3 and carries the ketone. Every carbon already in the chain has moved up two numbers.";
+    }
+    break;
+  case "kar":
+    o.cls = "nadph"; o.step = "TURN "+t+" OF "+T+" · STEP 2 / 4 · REDUCE";
+    o.title = "3-Ketoacyl-ACP reductase"; o.abbr = "KAR";
+    o.eq = keto(n)+"-ACP + NADPH + H⁺ → "+hydroxy(n)+"-ACP + NADP⁺";
+    o.tags = [["NADPH","nadph"]];
+    o.ox = ["C3", "ketone +2 → alcohol 0", "2 e⁻ gained"];
+    o.note = (t === 1)
+      ? "First reduction. The ketone on C3, the β-carbon, is reduced to a hydroxyl. The product is the (3R) isomer; β-oxidation runs through the (3S) isomer, one sign that synthesis and breakdown are separate pathways rather than one pathway run backwards. In a leaf in the light, the NADPH comes from photosynthetic electron transport."
+      : "Same reduction as in turn 1, on a chain that is now "+n+" carbons long: the C3 ketone becomes a (3R)-hydroxyl, using one NADPH.";
+    break;
+  case "had":
+    o.cls = "water"; o.step = "TURN "+t+" OF "+T+" · STEP 3 / 4 · DEHYDRATE";
+    o.title = "3-Hydroxyacyl-ACP dehydratase"; o.abbr = "HAD";
+    o.eq = hydroxy(n)+"-ACP → "+enoyl(n)+"-ACP + H₂O";
+    o.tags = [["H₂O out","water"]];
+    o.ox = ["C3 / C2", "0 → −1 and −2 → −1", "no net change"];
+    o.note = (t === 1)
+      ? "Water leaves from C2 and C3, leaving a trans double bond between them. Nothing is oxidised or reduced overall: C3 gains electrons as C2 loses them. The step exists to turn a hydroxyl, which is hard to reduce, into a C=C bond, which is easy to reduce."
+      : "Water leaves from C2 and C3 again, giving the trans double bond that the second reduction needs.";
+    break;
+  case "enr":
+    o.cls = "nadh"; o.step = "TURN "+t+" OF "+T+" · STEP 4 / 4 · REDUCE";
+    o.title = "Enoyl-ACP reductase"; o.abbr = "ENR";
+    o.eq = enoyl(n)+"-ACP + NADH + H⁺ → "+acyl(n)+"-ACP + NAD⁺";
+    o.tags = [["NADH","nadh"]];
+    o.ox = ["C2 and C3", "−1 → −2 each", "2 e⁻ gained"];
+    if (t === 1){
+      o.note = "Second reduction, and the turn is complete. The chain is a saturated acyl-ACP again, chemically the same as at the start of the turn but two carbons longer. Plastid enoyl-ACP reductase uses NADH, whereas animal fatty acid synthase uses NADPH for both reductions. Triclosan, a common antibacterial, inhibits this class of enzyme.";
+    } else {
+      o.note = "Turn "+t+" closes on "+acyl(n)+"-ACP ("+n+":0). The chain is saturated again, two carbons longer than when the turn began.";
+    }
+    if (s.last){
+      o.note += " This is as long as the chain gets on this route; next comes termination.";
+    } else if (t >= 1){
+      o.note += (t === 1) ? " Next: KAS I starts turn 2." : (t+1 === 8 ? " Next: only KAS II accepts 16:0-ACP." : "");
+    }
+    break;
+  case "sad":
+    o.cls = "o2"; o.step = "TERMINATION · DESATURATE";
+    o.title = "Stearoyl-ACP Δ9-desaturase"; o.abbr = "SAD";
+    o.eq = "stearoyl-ACP + O₂ + 2 Fd(red) + 2 H⁺ → oleoyl-ACP + 2 H₂O + 2 Fd(ox)";
+    o.tags = [["O₂","o2"],["2 Fd (reduced)","o2"],["2 H₂O out","water"]];
+    o.note = "A soluble di-iron enzyme in the stroma inserts a cis double bond between C9 and C10. Almost all other desaturases are membrane proteins; this one is peculiar to plants. Its electrons come from reduced ferredoxin, which in a leaf is supplied directly by photosystem I. The cis bond puts a permanent kink in the chain.";
+    break;
+  case "te":
+    var te = TE[s.te];
+    o.cls = "water"; o.step = "TERMINATION · RELEASE";
+    o.title = te.name; o.abbr = te.abbr;
+    o.eq = te.sub+"-ACP + H₂O → "+te.prod+" + ACP";
+    o.tags = [["H₂O in","water"]];
+    if (s.te === "fata") o.note = "FatA prefers 18:1-ACP. Hydrolysis frees the fatty acid and the ACP and ends synthesis. Oleate crosses the plastid envelope and is reactivated as oleoyl-CoA by a long-chain acyl-CoA synthetase on the outer envelope, then used in the ER for membrane lipids and, in seeds, for oil.";
+    if (s.te === "fatb") o.note = "FatB prefers saturated acyl-ACPs, and its main substrate in most tissues is 16:0-ACP. Releasing palmitate takes it out of reach of KAS II, so FatB and KAS II compete for the same molecule.";
+    if (s.te === "bay") o.note = "California bay (Umbellularia californica) seeds store oil rich in 12:0 because their FatB hydrolyses lauroyl-ACP before KAS I can extend it. Expressed in rapeseed seeds, this one enzyme redirected oil towards laurate (Voelker et al. 1992). The cycle itself is unchanged: chain length is decided by which enzyme reaches the acyl-ACP first.";
+    if (s.te === "te18") o.note = "With desaturation impaired, stearoyl-ACP is hydrolysed instead. Arabidopsis fab2 mutants carry far more stearate in their membrane lipids and are dwarfed (Lightner et al. 1994): membrane fluidity depends on that one cis double bond.";
+    if (s.pert === "fab1" && s.te === "fatb") o.notes.push(["","fab1: with KAS II gone in this model, 16:0-ACP has only one fate. Real fab1 plants keep some KAS II activity, so leaf 16:0 rises without 18-carbon fatty acids disappearing (Wu et al. 1994)."]);
+    break;
+  case "stall":
+    o.cls = "block"; o.step = "STALLED";
+    if (s.why === "grass"){
+      o.title = "ACCase blocked"; o.abbr = "homomeric ACCase";
+      o.eq = "acetyl-CoA + HCO₃⁻ + ATP ✕ malonyl-CoA";
+      o.note = "Aryloxyphenoxypropionate (“fop”) and cyclohexanedione (“dim”) herbicides inhibit the homomeric, multidomain form of ACCase. Grasses use that form in their plastids, so no malonyl-CoA is made and the cycle cannot even begin: KAS III needs malonyl-ACP too. Broadleaf plants have a heteromeric ACCase in the plastid that these herbicides do not inhibit.";
+    } else if (s.why === "cerulenin"){
+      o.title = "KAS I blocked"; o.abbr = "cerulenin";
+      o.eq = "butyryl-ACP + malonyl-ACP ✕ 3-ketohexanoyl-ACP";
+      o.note = "Cerulenin binds covalently to the active-site cysteine of KAS I and KAS II. KAS III is insensitive, so the first turn completed and the chain now waits at butyryl-ACP (4:0) for a KAS I that cannot act. A cerulenin-insensitive short-chain synthase in spinach leaves was the first evidence that a separate enzyme starts the chain (Jaworski et al. 1989).";
+    } else {
+      o.title = "Enoyl-ACP reductase blocked"; o.abbr = "triclosan";
+      o.eq = "crotonyl-ACP + NADH ✕ butyryl-ACP";
+      o.note = "Triclosan binds the enoyl reductase together with its NAD⁺ cofactor. The first turn stops after three of its four steps, crotonyl-ACP (trans-Δ²-butenoyl-ACP) accumulates, and the chain never gets past four carbons.";
+    }
+    break;
+  }
+  return o;
+}
+
+/* ---------- wheel ---------- */
+var CX = 320, CY = 330, R = 150;
+function pt(deg, r){ var a = deg*Math.PI/180; return [CX + r*Math.sin(a), CY - r*Math.cos(a)]; }
+function head(x, y, dx, dy, style, cls){
+  var L = Math.sqrt(dx*dx + dy*dy) || 1; dx /= L; dy /= L;
+  var nx = -dy, ny = dx, bx = x - dx*9.5, by = y - dy*9.5;
+  return '<polygon'+(cls ? ' class="'+cls+'"' : '')+(style ? ' style="'+style+'"' : '')+' points="'+f(x)+','+f(y)+' '+f(bx+nx*4.2)+','+f(by+ny*4.2)+' '+f(bx-nx*4.2)+','+f(by-ny*4.2)+'"></polygon>';
+}
+function bow(d0, d1, r0, rc, col, r1){
+  var p0 = pt(d0, r0), c = pt((d0+d1)/2, rc), p1 = pt(d1, r1 || r0);
+  return '<path d="M'+f(p0[0])+' '+f(p0[1])+' Q'+f(c[0])+' '+f(c[1])+' '+f(p1[0])+' '+f(p1[1])+'" fill="none" style="stroke:'+col+'" stroke-width="1.7"></path>' +
+    head(p1[0], p1[1], p1[0]-c[0], p1[1]-c[1], "fill:"+col);
+}
+function cofText(x, y, anchor, col, txt, id){
+  return '<text class="cof"'+(id ? ' id="'+id+'"' : '')+' x="'+f(x)+'" y="'+f(y)+'" text-anchor="'+anchor+'" style="fill:'+col+'">'+txt+'</text>';
+}
+var CHIPS = [
+  {id:"chip0", ang:45, txt:"KAS", col:COL.co2, tid:"kasText"},
+  {id:"chip1", ang:135, txt:"KAR", col:COL.nadph},
+  {id:"chip2", ang:225, txt:"HAD", col:COL.water},
+  {id:"chip3", ang:315, txt:"ENR", col:COL.nadh}
+];
+var NODE = {top:[320,180], right:[470,330], bottom:[320,480], left:[170,330]};
+var FX = 440;
+
+function buildWheel(){
+  var s = [];
+  s.push('<svg id="wheel" viewBox="-40 0 690 560"role="img" aria-label="The fatty acid synthesis cycle: condensation by KAS, reduction by KAR, dehydration by HAD and reduction by ENR, fed by malonyl-ACP from ACCase and MCMT.">');
+  s.push('<circle class="hub" cx="'+CX+'" cy="'+CY+'" r="74"></circle>');
+  // arcs
+  for (var i = 0; i < 4; i++){
+    var a0 = i*90 + 6, a1 = i*90 + 84;
+    var p0 = pt(a0, R), p1 = pt(a1, R);
+    var r1 = a1*Math.PI/180;
+    s.push('<g class="w-arc" id="arc'+i+'"><path d="M'+f(p0[0])+' '+f(p0[1])+' A'+R+' '+R+' 0 0 1 '+f(p1[0])+' '+f(p1[1])+'"></path>'+head(p1[0], p1[1], Math.cos(r1), Math.sin(r1))+'</g>');
+  }
+  // feeder: ACCase -> MCMT -> malonyl-ACP
+  s.push('<text class="feedtxt" x="'+FX+'" y="18">acetyl-CoA + HCO₃⁻</text>');
+  s.push('<line class="feedline" x1="'+FX+'" y1="23" x2="'+FX+'" y2="31"></line>'+head(FX, 34, 0, 1, "", "feedhead"));
+  s.push('<g class="chip" id="chipAcc"><title>Acetyl-CoA carboxylase: acetyl-CoA + HCO₃⁻ + ATP → malonyl-CoA + ADP + Pᵢ</title><rect x="'+(FX-38)+'" y="35" width="76" height="22" rx="3" style="stroke:'+COL.atp+'"></rect><text x="'+FX+'" y="50" style="fill:'+COL.atp+'">ACCase</text></g>');
+  s.push(cofText(FX+46, 50, "start", COL.atp, "ATP → ADP + Pᵢ"));
+  s.push('<line class="feedline" x1="'+FX+'" y1="57" x2="'+FX+'" y2="64"></line>'+head(FX, 67, 0, 1, "", "feedhead"));
+  s.push('<text class="feedtxt" x="'+FX+'" y="80">malonyl-CoA</text>');
+  s.push('<line class="feedline" x1="'+FX+'" y1="85" x2="'+FX+'" y2="91"></line>'+head(FX, 94, 0, 1, "", "feedhead"));
+  s.push('<g class="chip" id="chipMcmt"><title>Malonyl-CoA:ACP malonyltransferase: malonyl-CoA + ACP → malonyl-ACP + CoA</title><rect x="'+(FX-38)+'" y="95" width="76" height="22" rx="3" style="stroke:var(--ink-faint)"></rect><text x="'+FX+'" y="110" style="fill:var(--ink-soft)">MCMT</text></g>');
+  s.push(cofText(FX+46, 110, "start", "var(--ink-soft)", "ACP in, CoA out"));
+  var kin = pt(30, 212);
+  s.push('<path class="feedline" d="M'+FX+' 117 Q'+FX+' 132 '+f(kin[0]+3)+' '+f(kin[1]-6)+'"></path>');
+  s.push('<text class="cof" x="'+(FX+10)+'" y="137" style="fill:'+COL.co2+'">malonyl-ACP</text>');
+  // cofactor bows
+  s.push(bow(30, 60, 212, 170, COL.co2));
+  var ko = pt(64, 228);
+  s.push(cofText(ko[0]-6, ko[1]+8, "start", COL.co2, "CO₂ + ACP", "kasOut"));
+  s.push(bow(122, 148, 212, 170, COL.nadph));
+  var a = pt(118, 232); s.push(cofText(a[0], a[1]+4, "start", COL.nadph, "NADPH"));
+  a = pt(153, 232); s.push(cofText(a[0], a[1]+4, "start", COL.nadph, "NADP⁺"));
+  var h0 = pt(225, 168), h1 = pt(225, 204);
+  s.push('<line x1="'+f(h0[0])+'" y1="'+f(h0[1])+'" x2="'+f(h1[0])+'" y2="'+f(h1[1])+'" style="stroke:'+COL.water+'" stroke-width="1.7"></line>'+head(h1[0], h1[1], h1[0]-h0[0], h1[1]-h0[1], "fill:"+COL.water));
+  a = pt(225, 220); s.push(cofText(a[0]+4, a[1]+6, "end", COL.water, "H₂O"));
+  s.push(bow(302, 326, 212, 170, COL.nadh, 240));
+  a = pt(298, 232); s.push(cofText(a[0], a[1]+4, "end", COL.nadh, "NADH"));
+  a = pt(326, 256); s.push(cofText(a[0], a[1], "middle", COL.nadh, "NAD⁺"));
+  // exit to termination
+  s.push('<line x1="320" y1="171" x2="320" y2="128" style="stroke:var(--ink-soft)" stroke-width="1.7"></line>'+head(320, 124, 0, -1, "fill:var(--ink-soft)"));
+  s.push('<text class="w-faint" x="320" y="76" text-anchor="middle" id="exitLab">EXIT AT C18</text>');
+  s.push('<g class="chip" id="termBox"><rect x="260" y="88" width="120" height="30" rx="3" style="stroke:var(--o2)"></rect><text x="320" y="107.5" id="termText" style="fill:var(--o2)">SAD → FatA</text></g>');
+  // nodes + labels
+  var LAB = {
+    top:{x:306, y:146, anchor:"end"},
+    right:{x:484, y:324, anchor:"start"},
+    bottom:{x:320, y:506, anchor:"middle"},
+    left:{x:156, y:324, anchor:"end"}
+  };
+  Object.keys(NODE).forEach(function(k){
+    var p = NODE[k], L = LAB[k];
+    s.push('<circle class="w-node" cx="'+p[0]+'" cy="'+p[1]+'" r="6.5"></circle>');
+    s.push('<text class="w-l1" id="l1_'+k+'" x="'+L.x+'" y="'+L.y+'" text-anchor="'+L.anchor+'"></text>');
+    s.push('<text class="w-l2" id="l2_'+k+'" x="'+L.x+'" y="'+(L.y+17)+'" text-anchor="'+L.anchor+'"></text>');
+  });
+  // chips on ring
+  CHIPS.forEach(function(c){
+    var p = pt(c.ang, R);
+    s.push('<g class="chip" id="'+c.id+'"><rect x="'+f(p[0]-38)+'" y="'+f(p[1]-14)+'" width="76" height="28" rx="3" style="stroke:'+c.col+'"></rect><text x="'+f(p[0])+'" y="'+f(p[1]+4.5)+'" style="fill:'+c.col+'"'+(c.tid ? ' id="'+c.tid+'"' : '')+'>'+c.txt+'</text></g>');
+  });
+  // hub
+  s.push('<text class="hub-s" x="'+CX+'" y="'+(CY-34)+'" id="hubS0">chain length</text>');
+  s.push('<text class="hub-big" x="'+CX+'" y="'+(CY+14)+'" id="hubBig">C2</text>');
+  s.push('<text class="hub-s" x="'+CX+'" y="'+(CY+36)+'" id="hubS1">turn 0 of 8</text>');
+  s.push('<text class="hub-s" x="'+CX+'" y="'+(CY+52)+'" id="hubS2"></text>');
+  // token + stall mark
+  s.push('<circle id="tok" cx="320" cy="180" r="9"></circle>');
+  s.push('<g class="stallx" id="stallX" visibility="hidden"><line x1="-13" y1="-13" x2="13" y2="13"></line><line x1="13" y1="-13" x2="-13" y2="13"></line></g>');
+  s.push('</svg>');
+  $("wheelBox").innerHTML = s.join("");
+}
+
+function acylLab(n){ return acyl(n)+" · "+n+":0"; }
+
+function paintWheel(s){
+  var nT, top, topL1 = "acyl-ACP";
+  if (s.kind === "start" || (s.kind === "stall" && s.why === "grass")){ nT = 4; top = "acetyl-CoA"; topL1 = "primer"; }
+  else if (s.kind === "stall" && s.why === "cerulenin"){ nT = s.n + 2; top = acylLab(s.n); }
+  else if (s.kind === "kas" || s.kind === "kar" || s.kind === "had" || s.kind === "stall"){
+    nT = s.n;
+    if (s.turn === 1){ top = "acetyl-CoA"; topL1 = "primer"; } else top = acylLab(s.n - 2);
+  }
+  else if (s.kind === "enr"){ nT = s.n; top = acylLab(s.n); }
+  else { nT = s.n; top = s.desat ? "oleoyl · 18:1" : acylLab(s.n); }
+  $("l1_top").textContent = topL1;
+  $("l2_top").textContent = top;
+  $("l1_right").textContent = "3-ketoacyl-ACP";
+  $("l2_right").textContent = keto(nT);
+  $("l1_bottom").textContent = "3-hydroxyacyl-ACP";
+  $("l2_bottom").textContent = hydroxy(nT);
+  $("l1_left").textContent = "trans-Δ²-enoyl-ACP";
+  $("l2_left").textContent = enoyl(nT);
+
+  var kt;
+  if (s.kind === "start" || (s.kind === "stall" && s.why === "grass")) kt = 1;
+  else if (s.kind === "enr") kt = s.last ? s.turn : s.turn + 1;
+  else if (s.kind === "sad" || s.kind === "te") kt = s.T;
+  else kt = s.turn;
+  $("kasText").textContent = kasFor(kt);
+  $("kasOut").textContent = kt === 1 ? "CO₂ + CoA" : "CO₂ + ACP";
+
+  $("termText").textContent = s.term.map(function(k){ return TERMLAB[k]; }).join(" → ");
+  $("exitLab").textContent = "EXIT AT C" + (2 + 2*s.T);
+
+  // hub
+  if (s.carrier === "free"){ $("hubS0").textContent = "released"; $("hubBig").textContent = TE[s.te].sh.split(" ")[0]; }
+  else { $("hubS0").textContent = "chain length"; $("hubBig").textContent = "C" + s.n; }
+  var s1, s2 = "";
+  if (s.kind === "start"){ s1 = "turn 0 of " + s.T; s2 = "KAS III next"; }
+  else if (s.kind === "stall"){ s1 = "turn " + s.turn + " of " + s.T; s2 = "stalled"; }
+  else if (s.kind === "sad" || s.kind === "te"){ s1 = s.T + " turns done"; s2 = s.kind === "sad" ? "desaturating" : "chain released"; }
+  else { s1 = "turn " + s.turn + " of " + s.T; s2 = kasFor(s.turn); }
+  $("hubS1").textContent = s1; $("hubS2").textContent = s2;
+
+  // highlights
+  ["chip0","chip1","chip2","chip3","chipAcc","chipMcmt","termBox"].forEach(function(id){ $(id).classList.remove("on"); });
+  for (var i = 0; i < 4; i++) $("arc"+i).classList.remove("on");
+  if (typeof s.station === "number" && s.kind !== "stall"){ $("chip"+s.station).classList.add("on"); $("arc"+s.station).classList.add("on"); }
+  if (s.kind === "start"){ $("chipAcc").classList.add("on"); $("chipMcmt").classList.add("on"); }
+  if (s.station === "term") $("termBox").classList.add("on");
+
+  var tok = $("tok");
+  if (s.pos === "exit"){ tok.setAttribute("visibility","hidden"); }
+  else { var p = NODE[s.pos]; tok.setAttribute("visibility","visible"); tok.setAttribute("cx", p[0]); tok.setAttribute("cy", p[1]); }
+
+  var X = $("stallX");
+  if (s.kind === "stall"){
+    var c = s.blocked === "acc" ? [FX, 46] : (s.blocked === "kas" ? pt(45, R) : pt(315, R));
+    X.setAttribute("transform", "translate("+f(c[0])+" "+f(c[1])+")");
+    X.setAttribute("visibility","visible");
+  } else X.setAttribute("visibility","hidden");
+}
+
+/* ---------- chain drawing ---------- */
+var BL = 40, DX = BL*Math.cos(Math.PI/6), DY = BL/2, OMX = 66, YO = 124;
+var mode = "turn";
+function coords(n, desat){
+  var P = [[0,0]];
+  for (var k = 1; k < n; k++){
+    var ang = (desat && k >= 10) ? (k % 2 === 0 ? 90 : 150) : (k % 2 === 1 ? 150 : 210);
+    var r = ang*Math.PI/180, p = P[k-1];
+    P.push([p[0] + BL*Math.cos(r), p[1] + BL*Math.sin(r)]);
+  }
+  var c1x = OMX + (desat ? 17 : (n-1))*DX;
+  return P.map(function(p){ return [p[0] + c1x, p[1] + YO]; });
+}
+function fillOf(a){
+  if (mode === "turn") return a.t === 0 ? "var(--ink)" : "var(--t"+a.t+")";
+  return a.src === "c1" ? "var(--src1)" : "var(--src2)";
+}
+function inkOf(a){
+  if (mode === "turn"){ if (a.t === 0) return "var(--ground)"; return a.t <= 3 ? "var(--on-dark)" : "var(--on-light)"; }
+  return a.src === "c1" ? "var(--src1-on)" : "var(--src2-on)";
+}
+function line(x1, y1, x2, y2, extra){ return '<line class="bond" x1="'+f(x1)+'" y1="'+f(y1)+'" x2="'+f(x2)+'" y2="'+f(y2)+'"'+(extra||"")+'></line>'; }
+function dbl(P1, P2, towards, shrink){
+  var dx = P2[0]-P1[0], dy = P2[1]-P1[1], L = Math.sqrt(dx*dx+dy*dy);
+  var nx = -dy/L, ny = dx/L;
+  var mx = (P1[0]+P2[0])/2, my = (P1[1]+P2[1])/2;
+  if ((towards[0]-mx)*nx + (towards[1]-my)*ny < 0){ nx = -nx; ny = -ny; }
+  var o = 6.5, sh = shrink || 0.2;
+  return line(P1[0]+dx*sh+nx*o, P1[1]+dy*sh+ny*o, P2[0]-dx*sh+nx*o, P2[1]-dy*sh+ny*o);
+}
+function olab(x, y, txt, col){
+  return '<circle class="alab-bg" cx="'+f(x)+'" cy="'+f(y)+'" r="'+(txt.length > 1 ? 13 : 9.5)+'"></circle><text class="alab" x="'+f(x)+'" y="'+f(y+4.5)+'" style="fill:'+col+'">'+txt+'</text>';
+}
+function carbonyl(P, single, lab){
+  var ox = P[0], oy = P[1] - BL + 2, s = "";
+  if (single) s += line(P[0], P[1]-12, ox, oy+8);
+  else { s += line(P[0]-3.2, P[1]-12, ox-3.2, oy+8) + line(P[0]+3.2, P[1]-12, ox+3.2, oy+8); }
+  return s + olab(ox, oy, lab || "O", "var(--oxy)");
+}
+function acpBlob(cx, cy, faded, label){
+  return '<g class="acp"'+(faded ? ' opacity="0.45"' : '')+'><ellipse cx="'+f(cx)+'" cy="'+f(cy)+'" rx="40" ry="26"></ellipse><text x="'+f(cx)+'" y="'+f(cy+5)+'">ACP</text></g>' +
+    (label ? '<text class="small" x="'+f(cx)+'" y="'+f(cy+44)+'" text-anchor="middle">'+label+'</text>' : '');
+}
+
+function drawChain(s){
+  var n = s.n, P = coords(n, s.desat), A = s.atoms, out = [];
+  var c1 = P[0], ye = YO + DY, sx = c1[0] + DX;
+  // halos
+  s.hl.forEach(function(i){ if (P[i]) out.push('<circle class="halo pulse" cx="'+f(P[i][0])+'" cy="'+f(P[i][1])+'" r="19"></circle>'); });
+  // backbone
+  for (var k = 0; k < n-1; k++) out.push(line(P[k][0], P[k][1], P[k+1][0], P[k+1][1]));
+  if (s.c3 === "enoyl" && n >= 4) out.push(dbl(P[1], P[2], [P[1][0], P[1][1]+40]));
+  if (s.desat && n >= 11){
+    var mid = [(P[7][0]+P[10][0])/2, (P[7][1]+P[10][1])/2];
+    out.push(dbl(P[8], P[9], mid));
+    out.push('<text class="small" x="'+f(P[9][0]-16)+'" y="'+f(P[9][1]-20)+'" text-anchor="end" style="fill:var(--o2);font-size:12px">cis-Δ⁹</text>');
+  }
+  // C3 group
+  if (s.c3 === "keto" && n >= 4) out.push(carbonyl(P[2], false));
+  if (s.c3 === "hydroxy" && n >= 4){
+    out.push(carbonyl(P[2], true, "OH"));
+    out.push('<text class="small" x="'+f(P[2][0]+16)+'" y="'+f(P[2][1]-22)+'">3R</text>');
+  }
+  // C1 + carrier
+  out.push(carbonyl(c1, false));
+  if (s.carrier === "free"){
+    out.push(line(c1[0], c1[1], sx, ye));
+    out.push(olab(sx+4, ye, "O⁻", "var(--oxy)"));
+    out.push('<g class="fade-in">' + acpBlob(sx + 165, ye, true, "ACP, free again") + '</g>');
+  } else {
+    out.push(line(c1[0], c1[1], sx, ye));
+    out.push(olab(sx, ye, "S", "var(--sulfur)"));
+    if (s.carrier === "CoA"){
+      out.push(line(sx+10, ye, sx+30, ye));
+      out.push('<rect x="'+f(sx+30)+'" y="'+f(ye-14)+'" width="62" height="28" rx="14" style="fill:var(--surface-2);stroke:var(--ink-soft)" stroke-width="1.3"></rect><text x="'+f(sx+61)+'" y="'+f(ye+5)+'" text-anchor="middle" style="font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:15px;fill:var(--ink)">CoA</text>');
+    } else {
+      var w = "M"+f(sx+10)+" "+f(ye);
+      for (var q = 0; q < 4; q++) w += " q 10 "+(q % 2 ? 9 : -9)+" 20 0";
+      out.push('<path class="bond" d="'+w+'" style="stroke-width:1.8"></path>');
+      out.push(line(sx+90, ye, sx+96, ye));
+      out.push(acpBlob(sx+136, ye, false, ""));
+      out.push('<text class="small" x="'+f(sx+50)+'" y="'+f(ye+26)+'" text-anchor="middle">pantetheine arm</text>');
+    }
+  }
+  // atoms
+  for (var i = 0; i < n; i++){
+    var a = A[i], p = P[i];
+    var born = s.born.indexOf(i) >= 0 ? " born" : "";
+    out.push('<g class="atom'+born+'"><circle cx="'+f(p[0])+'" cy="'+f(p[1])+'" r="12.5" style="fill:'+fillOf(a)+'"></circle><text x="'+f(p[0])+'" y="'+f(p[1]+3.6)+'" style="fill:'+inkOf(a)+'">'+(i+1)+'</text></g>');
+  }
+  var w0 = P[n-1];
+  out.push('<text class="small" x="'+f(w0[0]-20)+'" y="'+f(w0[1]+4)+'" text-anchor="end" style="font-size:13px">ω</text>');
+  // incoming malonyl ghost
+  if (s.nextKas){
+    var gy = 44, tn = s.turn + 1;
+    var gx = [c1[0], c1[0]+DX, c1[0]+2*DX];
+    var gf = mode === "turn" ? ["var(--src0)", "var(--t"+tn+")", "var(--t"+tn+")"] : ["var(--src0)", "var(--src2)", "var(--src1)"];
+    var gi = mode === "turn" ? ["var(--on-light)", tn <= 3 ? "var(--on-dark)" : "var(--on-light)", tn <= 3 ? "var(--on-dark)" : "var(--on-light)"] : ["var(--on-light)", "var(--src2-on)", "var(--src1-on)"];
+    out.push('<g class="ghost fade-in"><rect x="'+f(gx[0]-26)+'" y="'+(gy-18)+'" width="'+f(2*DX+112)+'" height="36" rx="4"></rect>');
+    out.push(line(gx[0], gy, gx[2], gy, ' style="stroke-dasharray:3 3"'));
+    out.push(line(gx[2]+12, gy, gx[2]+30, gy));
+    out.push('<text x="'+f(gx[2]+33)+'" y="'+(gy+4.5)+'" style="font:600 12px var(--f-data);fill:var(--ink-soft)">S-ACP</text>');
+    for (var g = 0; g < 3; g++){
+      out.push('<circle cx="'+f(gx[g])+'" cy="'+gy+'" r="11" style="fill:'+gf[g]+';stroke:var(--ink);stroke-width:1.2'+(g === 0 ? ';stroke-dasharray:3 2' : '')+'"></circle>');
+    }
+    out.push('<text x="'+f(gx[0])+'" y="'+(gy+3.5)+'" text-anchor="middle" style="font:600 8.5px var(--f-data);fill:'+gi[0]+'">COO</text>');
+    out.push('<text class="small" x="'+f(gx[0]-26)+'" y="'+(gy-24)+'">next: malonyl-ACP '+(tn === 1 ? "+ the primer, via KAS III" : "via "+kasFor(tn))+'</text>');
+    out.push('</g>');
+  }
+  // CO2 leaving
+  if (s.co2){
+    var cx2 = P[2][0], cy2 = 46;
+    out.push('<g class="rise"><circle cx="'+f(cx2)+'" cy="'+cy2+'" r="11" style="fill:var(--src0);stroke:var(--ink);stroke-width:1.2;stroke-dasharray:3 2"></circle><text x="'+f(cx2+18)+'" y="'+(cy2+4.5)+'" style="font:600 13px var(--f-data);fill:var(--co2)">CO₂ ↑</text><text class="small" x="'+f(cx2+18)+'" y="'+(cy2-14)+'">from HCO₃⁻, released</text></g>');
+  }
+  var maxY = 0; P.forEach(function(p){ if (p[1] > maxY) maxY = p[1]; });
+  var H = Math.max(214, Math.ceil(maxY + 40));
+  var svg = $("chain");
+  svg.setAttribute("viewBox", "0 0 980 " + H);
+  svg.innerHTML = out.join("");
+
+  // header
+  var nm, sh;
+  if (s.carrier === "CoA"){ nm = "acetyl-CoA"; sh = "primer · 2 carbons"; }
+  else if (s.carrier === "free"){ nm = TE[s.te].prod; sh = TE[s.te].sh + " · free fatty acid"; }
+  else if (s.desat){ nm = "oleoyl-ACP"; sh = "18:1 cis-Δ⁹"; }
+  else if (s.c3 === "keto"){ nm = keto(n)+"-ACP"; sh = n + " carbons · ketone on C3"; }
+  else if (s.c3 === "hydroxy"){ nm = hydroxy(n)+"-ACP"; sh = n + " carbons · hydroxyl on C3"; }
+  else if (s.c3 === "enoyl"){ nm = enoyl(n)+"-ACP"; sh = n + " carbons · C2=C3 double bond"; }
+  else { nm = acyl(n)+"-ACP"; sh = n + ":0 · saturated"; }
+  if (s.kind === "stall") sh += " · stalled";
+  $("chainName").textContent = nm;
+  $("chainShort").textContent = sh;
+}
+
+function renderLegend(s){
+  var h = [];
+  if (mode === "turn"){
+    h.push('<span><i style="background:var(--ink)"></i>primer (acetyl-CoA)</span>');
+    for (var t = 1; t <= 8; t++) h.push('<span><i style="background:var(--t'+t+')"></i>turn '+t+'</span>');
+  } else {
+    h.push('<span><i style="background:var(--src1)"></i>from acetyl C1 (carbonyl)</span>');
+    h.push('<span><i style="background:var(--src2)"></i>from acetyl C2 (methyl)</span>');
+    h.push('<span><i style="background:var(--src0);border-style:dashed"></i>from HCO₃⁻, lost as CO₂</span>');
+  }
+  h.push('<span><i style="background:var(--halo);border-color:transparent;opacity:.6"></i>changed in this step</span>');
+  $("legend").innerHTML = h.join("");
+}
+
+/* ---------- ledger, equation, panel, track ---------- */
+var LED = [
+  ["acetyl","acetyl-CoA used","ink"],["mal","malonyl-ACP","co2"],
+  ["atp","ATP","atp"],["co2","CO₂ released","co2"],
+  ["nadph","NADPH","nadph"],["nadh","NADH","nadh"],
+  ["h2o","H₂O, net","water"],["fd","Fd reduced","o2"]
+];
+var lastLed = null;
+function renderLedger(s){
+  var h = ['<div class="lh">Running ledger</div>'];
+  LED.forEach(function(k){
+    var v = s.led[k[0]], ch = lastLed && lastLed[k[0]] !== v;
+    h.push('<div><span class="k">'+k[1]+'</span><span class="v'+(ch ? ' flash' : '')+'" style="color:'+COL[k[2]]+'">'+v+'</span></div>');
+  });
+  $("ledger").innerHTML = h.join("");
+  lastLed = s.led;
+}
+function renderEq(s){
+  var L = s.led, h;
+  if (s.final){
+    var te = TE[s.te];
+    var lhs = [L.acetyl+" acetyl-CoA", L.atp+" ATP", L.nadph+" NADPH", L.nadh+" NADH"];
+    if (L.o2) lhs.push("O₂", L.fd+" Fd(red)");
+    var rhs = [te.prod, L.acetyl+" CoA", L.atp+" ADP", L.atp+" Pᵢ", L.nadph+" NADP⁺", L.nadh+" NAD⁺", L.h2o+" H₂O"];
+    if (L.o2) rhs.push(L.fd+" Fd(ox)");
+    h = '<div class="eyebrow">Overall, from your ledger</div><div class="eq wrap">'+lhs.join(" + ")+'<br>→ '+rhs.join(" + ")+'</div>' +
+        '<p class="fine">Protons omitted. The '+L.co2+' HCO₃⁻ fixed by ACCase leave again as '+L.co2+' CO₂ and cancel out.</p>';
+  } else if (s.kind === "stall"){
+    h = '<div class="eyebrow">Overall</div><p class="fine"><b>Stalled.</b> Nothing is released, so there is no overall equation. The ledger shows what was spent before the block.</p>';
+  } else {
+    h = '<div class="eyebrow">Overall</div><p class="fine">The balanced equation appears here once the fatty acid is released.</p>';
+  }
+  $("eqbox").innerHTML = h;
+}
+function renderPanel(s){
+  var o = info(s), col = COL[o.cls] || COL.ink;
+  var tags = o.tags.length ? o.tags.map(function(t){ return '<span class="tag" style="color:'+COL[t[1]]+'">'+t[0]+'</span>'; }).join("") : "";
+  var h = '<div class="rowtop"><span class="stepno">'+o.step+'</span></div>' +
+    '<h3><span class="swatch" style="background:'+col+'"></span>'+esc(o.title)+(o.abbr ? ' <span class="ab">'+esc(o.abbr)+'</span>' : '')+'</h3>' +
+    '<div class="eq">'+o.eq+'</div>' +
+    (tags ? '<div class="spends">'+tags+'</div>' : '') +
+    (o.ox ? '<div class="ox"><span class="k">Oxidation state, '+o.ox[0]+'</span><span>'+o.ox[1]+'</span><span style="color:var(--ink-faint)">('+o.ox[2]+')</span></div>' : '') +
+    '<p>'+o.note+'</p>' +
+    o.notes.map(function(x){ return '<p class="whatif'+(x[0] === "ok" ? ' ok' : '')+'">'+x[1]+'</p>'; }).join("") +
+    '<div class="navrow"><button type="button" id="pBack">← Back</button><button type="button" id="pNext">Next →</button></div>';
+  $("panel").innerHTML = h;
+  $("pBack").disabled = idx === 0;
+  $("pNext").disabled = idx === states.length - 1;
+  $("pBack").addEventListener("click", function(){ stop(); go(idx - 1); });
+  $("pNext").addEventListener("click", function(){ stop(); go(idx + 1); });
+}
+function renderTrack(s){
+  var h = [], T = s.T, stallTurn = s.kind === "stall" ? Math.max(1, s.turn) : -1;
+  for (var t = 1; t <= 8; t++){
+    var st, on = 0, x = -1;
+    if (t > T) st = "skip";
+    else if (t === stallTurn){ st = "blocked"; on = s.done; x = s.done; }
+    else if (s.turn > t || s.kind === "sad" || s.kind === "te" || (s.turn === t && s.kind === "enr")){ st = "done"; on = 4; }
+    else if (s.turn === t){ st = "current"; on = {kas:1, kar:2, had:3}[s.kind] || 0; }
+    else st = "pending";
+    var pips = "";
+    for (var k = 0; k < 4; k++) pips += '<i class="'+(k < on ? "on" : (k === x ? "x" : ""))+'"></i>';
+    h.push('<div class="tc" data-st="'+st+'"><div class="bar" style="background:var(--t'+t+')"></div>' +
+      '<div class="tn">Turn '+t+'</div><div class="tk">'+kasFor(t)+'</div>' +
+      '<div class="tl">'+(st === "skip" ? "not used" : "C"+(2*t)+" → C"+(2*t+2))+'</div><div class="pips">'+pips+'</div></div>');
+  }
+  var tst = s.kind === "te" ? "done" : (s.kind === "sad" ? "current" : (s.kind === "stall" ? "skip" : "pending"));
+  var prod = (function(){ var k = s.term[s.term.length-1]; return TE[k].sh.split(" ")[0]; })();
+  h.push('<div class="tc" data-st="'+tst+'"><div class="bar" style="background:var(--o2)"></div><div class="tn">Release</div><div class="tk">'+s.term.map(function(k){ return TERMLAB[k]; }).join(" → ")+'</div><div class="tl">→ '+prod+'</div><div class="pips"><i class="'+(tst === "done" ? "on" : "")+'"></i></div></div>');
+  $("track").innerHTML = h.join("");
+}
+function renderHint(){
+  var p = $("pert").value, r = $("route").value, t;
+  var H = {
+    none: "Step through one turn slowly, then press <b>Run to end</b>. Watch which carbons change colour and which stay put.",
+    cerulenin: "<b>Predict first:</b> cerulenin inhibits KAS I and KAS II. How long will the chain be when it stops?",
+    triclosan: "<b>Predict first:</b> triclosan inhibits the enoyl reductase. Which intermediate accumulates?",
+    grass: "<b>Predict first:</b> fluazifop inhibits the multidomain form of ACCase, which grasses use in their plastids. How far does the cycle get?",
+    dicot: "<b>Predict first:</b> the same herbicide, on a broadleaf plant with a heteromeric plastid ACCase. Does anything change?",
+    fab1: "<b>Predict first:</b> fab1 plants have low KAS II activity. What will the plastid release instead of oleate?",
+    fab2: "<b>Predict first:</b> fab2 plants have low stearoyl-ACP desaturase activity. What is the product?"
+  };
+  t = H[p];
+  if ((p === "fab1" || p === "fab2") && r !== "ole") t += " (Choose the oleate route: this mutation does not touch the other two.)";
+  $("hint").innerHTML = t;
+}
+
+/* ---------- control ---------- */
+var states = [], idx = 0, timer = null;
+function rebuild(){
+  stop();
+  states = build($("route").value, $("pert").value);
+  for (var i = 0; i < states.length; i++) states[i].nextKas = !!(states[i+1] && states[i+1].kind === "kas");
+  lastLed = null;
+  $("ctrMax").textContent = states.length - 1;
+  renderHint();
+  go(0);
+}
+function go(i){
+  idx = Math.max(0, Math.min(states.length - 1, i));
+  var s = states[idx];
+  drawChain(s); paintWheel(s); renderLedger(s); renderEq(s); renderPanel(s); renderTrack(s); renderLegend(s);
+  $("ctr").textContent = idx;
+  $("bBack").disabled = idx === 0;
+  $("bStep").disabled = $("bEnd").disabled = idx === states.length - 1;
+  $("bPlay").disabled = idx === states.length - 1 && !timer;
+}
+function stop(){
+  if (timer){ clearInterval(timer); timer = null; }
+  $("bPlay").textContent = "Play"; $("bPlay").setAttribute("aria-pressed","false");
+  if (states.length) $("bPlay").disabled = idx === states.length - 1;
+}
+function play(){
+  if (idx === states.length - 1) return;
+  $("bPlay").textContent = "Pause"; $("bPlay").setAttribute("aria-pressed","true");
+  timer = setInterval(function(){
+    if (idx >= states.length - 1){ stop(); return; }
+    go(idx + 1);
+    if (idx >= states.length - 1) stop();
+  }, 1150);
+}
+$("bStep").addEventListener("click", function(){ stop(); go(idx + 1); });
+$("bBack").addEventListener("click", function(){ stop(); go(idx - 1); });
+$("bReset").addEventListener("click", function(){ stop(); lastLed = null; go(0); });
+$("bEnd").addEventListener("click", function(){ stop(); go(states.length - 1); });
+$("bPlay").addEventListener("click", function(){ if (timer) stop(); else play(); });
+$("route").addEventListener("change", rebuild);
+$("pert").addEventListener("change", rebuild);
+function setMode(m){
+  mode = m;
+  $("mTurn").setAttribute("aria-pressed", m === "turn" ? "true" : "false");
+  $("mSrc").setAttribute("aria-pressed", m === "src" ? "true" : "false");
+  var s = states[idx]; drawChain(s); renderLegend(s);
+}
+$("mTurn").addEventListener("click", function(){ setMode("turn"); });
+$("mSrc").addEventListener("click", function(){ setMode("src"); });
+document.addEventListener("keydown", function(e){
+  var tg = e.target && e.target.tagName;
+  if (tg === "SELECT" || tg === "INPUT" || tg === "TEXTAREA" || (e.target && e.target.tagName === "SUMMARY")) return;
+  if (e.key === "ArrowRight"){ stop(); go(idx + 1); e.preventDefault(); }
+  if (e.key === "ArrowLeft"){ stop(); go(idx - 1); e.preventDefault(); }
+});
+
+buildWheel();
+rebuild();
+})();
+</script>
+
+</body></html>
